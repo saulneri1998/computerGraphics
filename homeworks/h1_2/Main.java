@@ -2,12 +2,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
-import java.lang.Math;;
+import java.lang.Math;
 
 /**
  * Draws gradients between 6 colors
  * @author  Saul Neri A01652526
- * @since   Thursday, 9 January 2020.
+ * @since   Thursday, 14 January 2020. 1579028533
  */
 public class Main {
     static class Window extends JPanel {
