@@ -1,0 +1,13 @@
+6
+12
+33
+8
+45
+21
+16
+yes
+no
+I don't know
+meh
+nah
+sip
