@@ -12,9 +12,9 @@ import javax.swing.JTextField;
 import java.lang.Math;
 
 /**
- * Draws gradients between 6 colors
+ * Logo similar app
  * @author  Saul Neri A01652526
- * @since   Thursday, 14 January 2020. 1579028533
+ * @since   Thursday, 16 January 2020. 1579196056
  */
 public class Main {
     static class Window extends JFrame {
@@ -206,22 +206,19 @@ public class Main {
         // turtle object, draws vector based instructions
         private Turtle turtle = new Turtle();
 
+        // Methods to interact with turtle API
         public void position(double x, double y) {
             turtle.position(x, y);
         }
-
         public void goForwardDrawing(double pixels) {
             turtle.goForwardDrawing(this.getGraphics(), pixels);
         }
-
         public void goForward(double pixels) {
             turtle.goForward(pixels);
         }
-
         public void rotate(double ang) {
             turtle.rotate(ang);
         }
-
         public int getX() {
             return turtle.getX();
         }

@@ -5,9 +5,9 @@ import javax.swing.JFrame;
 import java.lang.Math;
 
 /**
- * Draws gradients between 6 colors
+ * Instruction based vector drawing api
  * @author  Saul Neri A01652526
- * @since   Thursday, 14 January 2020. 1579028533
+ * @since   Wednesday, 15 January 2020. 
  */
 public class Main {
     static class Window extends JPanel { 
