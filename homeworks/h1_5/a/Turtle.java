@@ -2,7 +2,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 
 /**
- * Model of drawing turtle
+ * Model of drawing turtle (vector based instructions)
  * @author  Saul Neri A01652526
  * @since   Wednesday, 15 January 2020. 
  */
@@ -38,8 +38,8 @@ public class Turtle {
      * @param y Vertical coordinate
      */
     public void position(double x, double y) {
-        this.x = (int)(x);
-        this.y = (int)(y);
+        this.x = (int)Math.round(x);
+        this.y = (int)Math.round(y);
     }
     
     /**
@@ -51,10 +51,10 @@ public class Turtle {
         double deltaX = pixels * Math.cos(Math.toRadians(this.a));
         double deltaY = pixels * Math.sin(Math.toRadians(this.a));
 
-        g.drawLine(this.x, this.y, (int)(this.x + deltaX), (int)(this.y + deltaY));
+        g.drawLine(this.x, this.y, (int)Math.round(this.x + deltaX), (int)Math.round(this.y + deltaY));
 
-        this.x += deltaX;
-        this.y += deltaY;
+        this.x = (int)Math.round(this.x + deltaX);
+        this.y = (int)Math.round(this.y + deltaY);
     }
     /**
      * Moves turtle in direction to it's current angle
@@ -64,15 +64,15 @@ public class Turtle {
         double deltaX = pixels * Math.cos(Math.toRadians(this.a));
         double deltaY = pixels * Math.sin(Math.toRadians(this.a));
 
-        this.x += deltaX;
-        this.y += deltaY;
+        this.x = (int)Math.round(this.x + deltaX);
+        this.y = (int)Math.round(this.y + deltaY);
     }
     /**
      * Rotates turtle's orientation clockwise
      * @param angle Angle to rotate turle, in degrees
      */
     public void rotate(double ang) {
-        this.a = (int)((this.a + ang) % 360);
+        this.a = (int)Math.round((this.a + ang) % 360);
     }
 
     /**
