@@ -100,8 +100,6 @@ public class Main {
             g.fillPolygon(this.ship.getXPoints(), this.ship.getYPoints(), this.ship.getXPoints().length);
             g.setColor(Color.RED);
             g.fillOval((int)this.ship.x, (int)this.ship.y, 10, 10);
-
-            System.out.println(this.ship.getXPoints()[0] + " " + this.ship.x);
         }
     }
 
