@@ -3,6 +3,8 @@ import javax.swing.JPanel;
 
 /**
  * Cone
+ * @author  Saul Neri A01652526
+ * @since   Wednesday, 29 January 2020
  */
 public class Cone {
 
@@ -26,7 +28,6 @@ public class Cone {
         int index = 0;
         for (int i = 0; i < hd; i++) {
             vertices[index] = new Point3D(0, ys[i], 0);
-            System.out.println(0 + ", " + ys[i] + ", " + 0);
             index++;
 
             double tempR = (double)r * ((double)h - ((double)i*(double)h/(double)hd)) / (double)h;
@@ -37,31 +38,25 @@ public class Cone {
                 tempX = tempR * Math.cos((double)j * 2*Math.PI / (double)bd);
                 tempZ = tempR * Math.sin((double)j * 2*Math.PI / (double)bd);
                 vertices[index] = new Point3D(tempX, ys[i], tempZ);
-                System.out.println(tempX + ", " + ys[i] + ", " + tempZ);
                 index++;
             }
         }
         vertices[index] = new Point3D(0, h/2, 0);
-        System.out.println(0 + ", " + h/2 + ", " + 0);
 
         index = 0;
         for (int i = 0; i < nVertices; i++) {
             if (i % (bd+1) != 0) {
                 edges[index] = new Edge(i, i - (i % (bd+1)));
-                System.out.println("Edge x: " + i + ", " + (i - (i % (bd+1))));
                 index++;
 
                 edges[index] = new Edge(i, Math.min(i + (bd+1), nVertices-1));
-                System.out.println("Edge x: " + i + ", " + Math.min(i + (bd+1), nVertices-1));
                 index++;
             }
             if ((i+1) % (bd+1) == 0) {
                 edges[index] = new Edge(i, i - bd + 1);
-                System.out.println("Edge x: " + i + ", " + (i - bd + 1));
                 index++;
             } else if (i % (bd+1) != 0) {
                 edges[index] = new Edge(i, i + 1);
-                System.out.println("Edge x: " + i + ", " + (i + 1));
                 index++;
             }
         }

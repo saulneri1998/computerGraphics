@@ -3,6 +3,8 @@ import javax.swing.JPanel;
 
 /**
  * Box
+ * @author  Saul Neri A01652526
+ * @since   Wednesday, 29 January 2020
  */
 public class Box {
 
@@ -43,7 +45,6 @@ public class Box {
             for (double yi : ys) {
                 for (double zi : zs) {
                     vertices[index] = new Point3D(xi, yi, zi);
-                    System.out.println(xi + ", " + yi + ", " + zi);
                     index++;
                 }
             }
@@ -53,19 +54,16 @@ public class Box {
         for (int i = 0; i < nVertices; i++) {
             if ((i+1) % (zc+1) != 0) {
                 edges[index] = new Edge(i, i + 1);
-                System.out.println("Edge x: " + i + ", " + (i + 1));
                 index++;
             }
 
             if ((i/(zc+1)+1) % (yc+1) != 0) {
                 edges[index] = new Edge(i, i + zc + 1);
-                System.out.println("Edge y: " + i + ", " + (i + zc + 1));
                 index++;
             }
 
             if ((i/((zc+1)*(yc+1))+1) % (xc+1) != 0) {
                 edges[index] = new Edge(i, i + ((zc+1)*(yc+1)));
-                System.out.println("Edge z: " + i + ", " + (i + ((zc+1)*(yc+1))));
                 index++;
             }
         }

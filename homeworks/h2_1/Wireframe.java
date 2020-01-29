@@ -12,6 +12,8 @@ import java.lang.Math;
 
 /**
  * Wireframe
+ * @author  Saul Neri A01652526
+ * @since   Wednesday, 29 January 2020
  */
 public class Wireframe extends JFrame implements KeyListener, FocusListener{
     Canvas canvas;
