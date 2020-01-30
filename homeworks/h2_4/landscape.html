@@ -1,0 +1,97 @@
+<html>
+
+<head>
+    <title> Homework 2.4 </title>
+    <style>
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+
+<body>
+    <script src="three.min.js">
+    </script>
+    <script>
+        window.addEventListener('keydown', doKeyDown, true);
+
+        var theta = 3.1416 / 2;
+        var distance = 60;
+
+        function doKeyDown(evt) {
+            evt.preventDefault();
+            switch (evt.keyCode) {
+                case 38:
+                    /* Up arrow pressed */
+                    distance -= 1;
+                    break;
+                case 40:
+                    /* Down arrow pressed */
+                    distance += 1;
+                    break;
+                case 37:
+                    /* Left arrow pressed */
+                    theta += 0.1;
+                    break;
+                case 39:
+                    /* Right arrow pressed */
+                    theta -= 0.1;
+                    break;
+            }
+        }
+        // three basic components of a scene : scene, camera, and render 
+        // (lights)
+
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
+
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0xffffff, 0);
+        document.body.appendChild(renderer.domElement);
+
+        // groups declaration
+        var house = new THREE.Group();
+        var car = new THREE.Group();
+        var dog = new THREE.Group();
+        var tree = new THREE.Group();
+
+        var greenMat = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+            wireframe: true
+        });
+        var redMat = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            wireframe: true
+        });
+        var brownMat = new THREE.MeshBasicMaterial({
+            color: 0x75463a,
+            wireframe: true
+        });
+        var blueMat = new THREE.MeshBasicMaterial({
+            color: 0x000fff,
+            wireframe: true
+        });
+        var blackMat = new THREE.MeshBasicMaterial({
+            color: 0x000000,
+            wireframe: true
+        });
+
+        var render = function() {
+            requestAnimationFrame(render);
+
+            camera.position.x = distance * Math.cos(theta);
+            camera.position.y = 0;
+            camera.position.z = distance * Math.sin(theta);
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        };
+
+        render();
+    </script>
+</body>
+
+</html>
