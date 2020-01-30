@@ -17,7 +17,8 @@
         window.addEventListener('keydown', doKeyDown, true);
 
         var theta = 3.1416 / 2;
-        var distance = 60;
+        var distance = 20;
+        var elevation = 6;
 
         function doKeyDown(evt) {
             evt.preventDefault();
@@ -38,6 +39,14 @@
                     /* Right arrow pressed */
                     theta -= 0.1;
                     break;
+                case 87:
+                    /* W was pressed */
+                    elevation += 0.2;
+                    break;
+                case 83:
+                    /* S was pressed */
+                    elevation -= 0.2;
+                    break;
             }
         }
         // three basic components of a scene : scene, camera, and render 
@@ -47,16 +56,9 @@
         var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         var renderer = new THREE.WebGLRenderer();
 
-
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setClearColor(0xffffff, 0);
         document.body.appendChild(renderer.domElement);
-
-        // groups declaration
-        var house = new THREE.Group();
-        var car = new THREE.Group();
-        var dog = new THREE.Group();
-        var tree = new THREE.Group();
 
         var greenMat = new THREE.MeshBasicMaterial({
             color: 0x00ff00,
@@ -78,17 +80,218 @@
             color: 0x000000,
             wireframe: true
         });
+        var whiteMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            wireframe: true
+        });
+        var grayMat = new THREE.MeshBasicMaterial({
+            color: 0x888888,
+            wireframe: true
+        });
+        var mildYellowMat = new THREE.MeshBasicMaterial({
+            color: 0xF8E2A1,
+            wireframe: true
+        });
+        var orangeMat = new THREE.MeshBasicMaterial({
+            color: 0xEA7D00,
+            wireframe: true
+        });
+        var dogColor = new THREE.MeshBasicMaterial({
+            color: 0xBC9F78,
+            wireframe: true
+        });
+        var darkDogColor = new THREE.MeshBasicMaterial({
+            color: 0x805D39,
+            wireframe: true
+        });
+
+        // var cubeGeometry = new THREE.CubeGeometry(1, 1, 1);
+        // var coneGeometry = new THREE.ConeGeometry(1, 1, 32, 6, true, 0, Math.PI * 2);
+        // var cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 16, 4, false);
+        // var sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+
+        // var house1 = createHouse(7, 5, redMat);
+        // createDog();
+        // createCar();
+
+        scene.add(createFloor(40, 40));
+
+        scene.add(createTree(-15, 0));
+        scene.add(createTree(-5, 10));
+        scene.add(createTree(0, 0));
+        scene.add(createTree(7, -8));
+
+        scene.add(createHouse(7, 5, redMat));
+        scene.add(createHouse(4, -3, redMat));
+        scene.add(createHouse(-9, 5, blueMat));
+        scene.add(createHouse(-15, -3, blueMat));
+
+        scene.add(createCar(10, 10, redMat));
+        scene.add(createCar(-10, -10, orangeMat));
+        scene.add(createCar(0, 5, redMat));
+        scene.add(createCar(-16, 13, orangeMat));
+        scene.add(createCar(0, 5, redMat));
+
+        scene.add(createDog(0, 12));
+        scene.add(createDog(15, 4));
+        scene.add(createDog(-4, 4));
+        scene.add(createDog(-12, 10));
+        scene.add(createDog(-8, -3));
+
 
         var render = function() {
             requestAnimationFrame(render);
 
             camera.position.x = distance * Math.cos(theta);
-            camera.position.y = 0;
+            camera.position.y = elevation;
             camera.position.z = distance * Math.sin(theta);
             camera.lookAt(scene.position);
 
             renderer.render(scene, camera);
         };
+
+        function createFloor(x, z) {
+            var planeGeom = new THREE.PlaneGeometry(x, z, x / 2, z / 2);
+            var plane = new THREE.Mesh(planeGeom, whiteMat);
+
+            plane.geometry.rotateX(Math.PI / 2);
+            plane.geometry.translate(0, -1, 0);
+
+            return plane;
+        }
+
+        function createTree(x, z) {
+            var coneGeometry = new THREE.ConeGeometry(1, 1, 128, 6, true, 0, Math.PI * 2);
+            var cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 128, 4, false);
+
+            log = new THREE.Mesh(cylinderGeometry, brownMat);
+            leaves = new THREE.Mesh(coneGeometry, greenMat);
+
+            log.geometry.scale(0.5, 2, 0.5);
+            leaves.geometry.scale(1.5, 3, 1.5);
+            leaves.geometry.translate(0, 2, 0);
+
+            tree = new THREE.Object3D();
+            tree.add(log);
+            tree.add(leaves);
+
+            tree.position.x += x;
+            tree.position.z += z;
+
+            return tree;
+        }
+
+        function createHouse(x, z, roofColor) {
+            body = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 32, 16, 16), mildYellowMat)
+            roof = new THREE.Mesh(new THREE.ConeGeometry(1, 1, 128, 4, true, 0, Math.PI * 2), roofColor);
+            garage = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 16, 16, 16), brownMat);
+
+            body.geometry.scale(3, 1.5, 1);
+            roof.geometry.scale(2, 1.2, 1);
+            garage.geometry.scale(1, 1.2, 1);
+
+            roof.geometry.translate(0, 1.3, 0);
+            garage.geometry.translate(-2.05, -0.15, 0);
+
+            house = new THREE.Object3D();
+            house.add(body);
+            house.add(roof);
+            house.add(garage);
+
+            house.position.x += x;
+            house.position.z += z;
+
+            return house;
+        }
+
+        function createCar(x, z, color) {
+            car = new THREE.Object3D();
+
+            body = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), color);
+            win = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), blueMat);
+            roof = new THREE.Mesh(new THREE.SphereGeometry(1, 128, 128), color);
+            tire1 = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 16, 4, false), grayMat);
+            tire2 = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 16, 4, false), grayMat);
+            tire3 = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 16, 4, false), grayMat);
+            tire4 = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 16, 4, false), grayMat);
+
+            body.geometry.scale(1.5, 0.9, 0.9);
+            roof.geometry.scale(1, 0.8, 0.9);
+            win.geometry.scale(1, 0.8, 0.9);
+            tire1.geometry.scale(0.4, 0.1, 0.3);
+            tire2.geometry.scale(0.4, 0.1, 0.3);
+            tire3.geometry.scale(0.4, 0.1, 0.3);
+            tire4.geometry.scale(0.4, 0.1, 0.3);
+
+            roof.geometry.translate(0, 0.6, 0);
+            win.geometry.translate(-0.1, 0.5, 0);
+
+            tire1.geometry.rotateX(Math.PI / 2);
+            tire2.geometry.rotateX(Math.PI / 2);
+            tire3.geometry.rotateX(Math.PI / 2);
+            tire4.geometry.rotateX(Math.PI / 2);
+
+            tire1.geometry.translate(-0.8, -0.5, 0.9);
+            tire2.geometry.translate(-0.8, -0.5, -0.9);
+            tire3.geometry.translate(0.8, -0.5, 0.9);
+            tire4.geometry.translate(0.8, -0.5, -0.9);
+
+            car.add(body);
+            car.add(roof);
+            car.add(win);
+            car.add(tire1);
+            car.add(tire2);
+            car.add(tire3);
+            car.add(tire4);
+
+            car.position.x += x;
+            car.position.z += z;
+
+            return car;
+        }
+
+        function createDog(x, z) {
+            body = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), dogColor);
+            head = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), darkDogColor);
+            eye1 = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), blackMat);
+            eye2 = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), blackMat);
+            leg1 = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 100, 4, false), darkDogColor);
+            leg2 = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 100, 4, false), darkDogColor);
+            leg3 = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 100, 4, false), darkDogColor);
+            leg4 = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 100, 4, false), darkDogColor);
+
+            body.geometry.scale(0.45, 0.2, 0.2);
+            head.geometry.scale(0.2, 0.15, 0.15);
+            leg1.geometry.scale(0.05, 0.2, 0.05);
+            leg2.geometry.scale(0.05, 0.2, 0.05);
+            leg3.geometry.scale(0.05, 0.2, 0.05);
+            leg4.geometry.scale(0.05, 0.2, 0.05);
+            eye1.geometry.scale(0.05, 0.05, 0.05);
+            eye2.geometry.scale(0.05, 0.05, 0.05);
+
+            head.geometry.translate(-0.3, 0.2, 0);
+            leg1.geometry.translate(-0.3, -0.15, -0.15);
+            leg2.geometry.translate(-0.3, -0.15, 0.15);
+            leg3.geometry.translate(0.3, -0.15, -0.15);
+            leg4.geometry.translate(0.3, -0.15, 0.15);
+            eye1.geometry.translate(-0.37, 0.3, 0.1);
+            eye2.geometry.translate(-0.37, 0.3, -0.1);
+
+            dog = new THREE.Object3D();
+            dog.add(body);
+            dog.add(head);
+            dog.add(leg1);
+            dog.add(leg2);
+            dog.add(leg3);
+            dog.add(leg4);
+            dog.add(eye1);
+            dog.add(eye2);
+
+            dog.position.x += x;
+            dog.position.z += z;
+
+            return dog;
+        }
 
         render();
     </script>
