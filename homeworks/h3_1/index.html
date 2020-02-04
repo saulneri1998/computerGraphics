@@ -1,0 +1,217 @@
+<html>
+
+<head>
+    <title> Gears </title>
+    <style>
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+
+<body>
+    <script src="three.min.js">
+    </script>
+
+    <script>
+        window.addEventListener('keydown', doKeyDown, true);
+        var cam_zpos = 8.0;
+        var cam_xpos = 0.0;
+        var Pi = 3.1415926535;
+        var ang_rad = 0;
+        var up_down_ang = 0;
+
+        function doKeyDown(evt) {
+            evt.preventDefault();
+            console.log("Tecla picada: " + evt.keyCode);
+            switch (evt.keyCode) {
+                case 38:
+                    /* Up arrow was pressed */
+                    var dx = 0.5 * Math.sin(ang_rad);
+                    var dz = 0.5 * Math.cos(ang_rad);
+                    cam_zpos -= dz;
+                    cam_xpos -= dx;
+                    break;
+                case 40:
+                    /* Down arrow was pressed */
+                    var dx = 0.5 * Math.sin(ang_rad);
+                    var dz = 0.5 * Math.cos(ang_rad);
+                    cam_zpos += dz;
+                    cam_xpos += dx;
+                    break;
+                case 37:
+                    /* Left arrow was pressed */
+                    ang_rad += (5 * Pi / 180);
+                    break;
+                case 39:
+                    /* Right arrow was pressed */
+                    ang_rad -= (5 * Pi / 180);
+                    break;
+                case 87:
+                    /* W was pressed */
+                    camera.position.y += 0.5;
+                    break;
+                case 83:
+                    /* S was pressed */
+                    camera.position.y -= 0.5;
+                    break;
+                case 65:
+                    /* A was pressed */
+                    var dx = 0.5 * Math.sin(ang_rad + (Pi / 2));
+                    var dz = 0.5 * Math.cos(ang_rad + (Pi / 2));
+                    cam_zpos -= dz;
+                    cam_xpos -= dx;
+                    break;
+                case 68:
+                    /* D was pressed */
+                    var dx = 0.5 * Math.sin(ang_rad - (Pi / 2));
+                    var dz = 0.5 * Math.cos(ang_rad - (Pi / 2));
+                    cam_zpos -= dz;
+                    cam_xpos -= dx;
+                    break;
+            }
+        }
+
+        // three basic components of a scene
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
+        var renderer = new THREE.WebGLRenderer();
+
+        var redMaterial = new THREE.MeshLambertMaterial({
+            color: 0xff0000
+        });
+        var greenMaterial = new THREE.MeshLambertMaterial({
+            color: 0x00ff00
+        });
+        var blueMaterial = new THREE.MeshLambertMaterial({
+            color: 0x0000ff
+        });
+        var grayMaterial = new THREE.MeshLambertMaterial({
+            color: 0x999999
+        });
+        var goldMaterial = new THREE.MeshLambertMaterial({
+            map: THREE.ImageUtils.loadTexture("gold.jpg")
+        });
+
+        var extrudeSettings1 = {
+            steps: 2,
+            depth: 0.5,
+            bevelEnabled: false
+        };
+        var extrudeSettings2 = {
+            steps: 2,
+            depth: 5,
+            bevelEnabled: false
+        };
+
+        var main = new THREE.Object3D();
+
+        var redGearShape = gearShape(1, 1.2);
+        redGearShape.holes = [gearHole(0.5, 0.6)];
+        var greenGearShape = gearShape(1.5, 1.8);
+        greenGearShape.holes = [gearHole(0.5, 0.6)];
+        var blueGearShape = gearShape(1.5, 1.8);
+        blueGearShape.holes = [gearHole(0.5, 0.6)];
+        var grayGearShape = gearShape(0.5, 0.6);
+
+        var redGeom = new THREE.ExtrudeGeometry(redGearShape, extrudeSettings1);
+        var greenGeom = new THREE.ExtrudeGeometry(greenGearShape, extrudeSettings1);
+        var blueGeom = new THREE.ExtrudeGeometry(blueGearShape, extrudeSettings1);
+        var grayGeom = new THREE.ExtrudeGeometry(grayGearShape, extrudeSettings2);
+
+        var redGear = new THREE.Mesh(redGeom, redMaterial);
+        var greenGear = new THREE.Mesh(greenGeom, greenMaterial);
+        var blueGear = new THREE.Mesh(blueGeom, blueMaterial);
+        var grayGear = new THREE.Mesh(grayGeom, goldMaterial);
+
+        grayGear.position.z -= 4;
+        greenGear.position.z -= 3;
+        blueGear.position.z -= 3;
+        blueGear.position.y += 3.3;
+        blueGear.rotation.z += (1 / 18 + 1 / 36);
+
+        main.add(redGear);
+        main.add(greenGear);
+        main.add(grayGear);
+
+        scene.add(main);
+        scene.add(blueGear);
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        camera.position.z = cam_zpos;
+
+        // create  point lights
+        var pointLight = new THREE.PointLight(0xFFFFFF);
+        var pointLight2 = new THREE.PointLight(0xFFFFAA);
+
+        pointLight.position.x = 10;
+        pointLight.position.y = 50;
+        pointLight.position.z = 130;
+
+        scene.add(pointLight);
+
+        pointLight2.position.x = 10;
+        pointLight2.position.y = 50;
+        pointLight2.position.z = -130;
+
+        scene.add(pointLight2);
+
+        renderer.setClearColor(0x000000, 1);
+
+        var render = function() {
+            requestAnimationFrame(render);
+            camera.position.x = cam_xpos;
+            camera.position.z = cam_zpos;
+            camera.rotation.y = ang_rad;
+
+            main.rotation.z += 0.01;
+            blueGear.rotation.z -= 0.01;
+
+            renderer.render(scene, camera);
+        };
+
+        function gearShape(r1, r2) {
+            var shape = new THREE.Shape();
+            shape.moveTo(r1, 0);
+            var angle = 0;
+            for (i = 0; i < 12; i++) {
+                shape.lineTo(r1 * Math.cos(angle), r1 * Math.sin(angle));
+                angle += 1 / 18 * Math.PI;
+                shape.lineTo(r1 * Math.cos(angle), r1 * Math.sin(angle));
+                angle += 1 / 36 * Math.PI;
+                shape.lineTo(r2 * Math.cos(angle), r2 * Math.sin(angle));
+                angle += 1 / 18 * Math.PI;
+                shape.lineTo(r2 * Math.cos(angle), r2 * Math.sin(angle));
+                angle += 1 / 36 * Math.PI;
+            }
+            shape.lineTo(r1, 0);
+
+            return (shape);
+        }
+
+        function gearHole(r1, r2) {
+            var shape = new THREE.Path();
+            shape.moveTo(r1, 0);
+            var angle = 0;
+            for (i = 0; i < 12; i++) {
+                shape.lineTo(r1 * Math.cos(angle), r1 * Math.sin(angle));
+                angle += 1 / 18 * Math.PI;
+                shape.lineTo(r1 * Math.cos(angle), r1 * Math.sin(angle));
+                angle += 1 / 36 * Math.PI;
+                shape.lineTo(r2 * Math.cos(angle), r2 * Math.sin(angle));
+                angle += 1 / 18 * Math.PI;
+                shape.lineTo(r2 * Math.cos(angle), r2 * Math.sin(angle));
+                angle += 1 / 36 * Math.PI;
+            }
+            shape.lineTo(r1, 0);
+
+            return (shape);
+        }
+        render();
+    </script>
+</body>
+
+</html>
