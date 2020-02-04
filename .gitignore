@@ -25,6 +25,10 @@ hs_err_pid*
 # Mac store
 .DS_Store
 
-# DEliverable
+# Deliverable
 A01652526/
 A01652526/*.java
+
+# VScode
+.vscode/
+.vscode/*

@@ -41,7 +41,7 @@ public class Cone {
                 index++;
             }
         }
-        vertices[index] = new Point3D(0, h/2, 0);
+        vertices[index] = new Point3D(0, ys[ys.length-1], 0);
 
         index = 0;
         for (int i = 0; i < nVertices; i++) {
