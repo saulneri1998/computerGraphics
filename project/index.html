@@ -837,11 +837,70 @@
         ferrisWheelComplete.position.x += 10;
         ferrisWheelComplete.position.z -= 10;
 
+        // Frisbee
+        var frisbeeComplete = new THREE.Object3D();
+
+        var frisbeBase = new THREE.Object3D();
+        base1 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), darkGrayMaterial);
+        base1.rotateZ(Math.PI / 20 * 8);
+        base1.position.y += 3.8;
+        base1.position.z += 2;
+        base1.position.x -= 1;
+        base2 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), darkGrayMaterial);
+        base2.rotateZ(-Math.PI / 20 * 8);
+        base2.position.y += 3.8;
+        base2.position.z += 2;
+        base2.position.x += 1;
+        base3 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), darkGrayMaterial);
+        base3.rotateZ(Math.PI / 20 * 8);
+        base3.position.y += 3.8;
+        base3.position.z -= 2;
+        base3.position.x -= 1;
+        base4 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), darkGrayMaterial);
+        base4.rotateZ(-Math.PI / 20 * 8);
+        base4.position.y += 3.8;
+        base4.position.z -= 2;
+        base4.position.x += 1;
+        base5 = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 5), darkGrayMaterial);
+        var base6 = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 4, 128, 1), darkGrayMaterial);
+        base6.rotateX(Math.PI / 2);
+        base6.position.y += 7;
+        frisbeBase.add(base1);
+        frisbeBase.add(base2);
+        frisbeBase.add(base3);
+        frisbeBase.add(base4);
+        frisbeBase.add(base5);
+        frisbeBase.add(base6);
+
+        var frisbee = new THREE.Object3D();
+        var frisbeeArm = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 4, 128, 1), darkGrayMaterial);
+        frisbee.add(frisbeeArm);
+        frisbeeArm.position.y += 2;
+
+        var frisbeeDisc = new THREE.Mesh(new THREE.TorusGeometry(1.4, 0.16, 128, 128), darkGrayMaterial);
+        frisbeeDisc.rotateX(Math.PI / 2);
+        frisbee.add(frisbeeDisc);
+        frisbeeDisc.position.y += 4;
+
+        var frisbeeDiscStarGeom = new THREE.ExtrudeGeometry(gearShape(1.4, 0.3), extrudeSettings);
+        var frisbeeDiscStar = new THREE.Mesh(frisbeeDiscStarGeom, darkGrayMaterial);
+        frisbeeDiscStar.rotateX(Math.PI / 2);
+        frisbee.add(frisbeeDiscStar);
+        frisbeeDiscStar.position.y += 4;
+
+        frisbee.position.y += 7;
+
+        frisbeeComplete.add(frisbeBase);
+        frisbeeComplete.add(frisbee);
+
+        frisbeeComplete.position.x += 10;
+        frisbeeComplete.position.z += 10;
 
         scene.add(plane);
         scene.add(car);
         scene.add(carouselComplete);
         scene.add(ferrisWheelComplete);
+        scene.add(frisbeeComplete);
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -872,6 +931,9 @@
             camera.position.x = cam_xpos;
             camera.position.z = cam_zpos;
             camera.rotation.y = ang_rad;
+
+            frisbee.rotation.z += 0.03;
+            frisbeeDiscStar.rotation.z += 0.05;
 
             ferrisWheel.rotation.z += 0.01;
             basket1.rotation.z -= 0.01
