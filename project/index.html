@@ -744,9 +744,104 @@
 
         carouselComplete.position.x += 10;
 
+        var ferrisWheel = new THREE.Object3D();
+        var ferrisOutline1 = new THREE.Mesh(new THREE.TorusGeometry(3, 0.1, 4, 256), darkGrayMaterial);
+        ferrisOutline1.position.z += 0.5;
+        var ferrisOutline2 = new THREE.Mesh(new THREE.TorusGeometry(3, 0.1, 4, 256), darkGrayMaterial);
+        ferrisOutline2.position.z -= 0.5;
+        ferrisWheel.add(ferrisOutline1);
+        ferrisWheel.add(ferrisOutline2);
+
+        var ferrisStar1Geom = new THREE.ExtrudeGeometry(gearShape(3, 0.5), extrudeSettings);
+        var ferrisStar2Geom = new THREE.ExtrudeGeometry(gearShape(3, 0.5), extrudeSettings);
+        var ferrisStar1 = new THREE.Mesh(ferrisStar1Geom, darkGrayMaterial);
+        ferrisStar1.position.z += 0.5;
+        var ferrisStar2 = new THREE.Mesh(ferrisStar2Geom, darkGrayMaterial);
+        ferrisStar2.position.z -= 0.5;
+        ferrisWheel.add(ferrisStar1);
+        ferrisWheel.add(ferrisStar2);
+
+        var basket1 = new THREE.Object3D();
+        var basket2 = new THREE.Object3D();
+        var basket3 = new THREE.Object3D();
+        var basket4 = new THREE.Object3D();
+
+        loader.load('basket/model.obj', function(object) {
+            basket1 = object;
+            object.scale.set(0.4, 0.4, 0.4);
+            object.position.x -= 3.2;
+            object.position.y += 0;
+
+            ferrisWheel.add(object);
+        });
+        loader.load('basket/model.obj', function(object) {
+            basket2 = object;
+            object.scale.set(0.4, 0.4, 0.4);
+            object.position.x += 3.2;
+            object.position.y += 0;
+
+            ferrisWheel.add(object);
+        });
+        loader.load('basket/model.obj', function(object) {
+            basket3 = object;
+            object.scale.set(0.4, 0.4, 0.4);
+            object.position.x += 0;
+            object.position.y += 3.2;
+
+            ferrisWheel.add(object);
+        });
+        loader.load('basket/model.obj', function(object) {
+            basket4 = object;
+            object.scale.set(0.4, 0.4, 0.4);
+            object.position.x += 0;
+            object.position.y -= 3.2;
+
+            ferrisWheel.add(object);
+        });
+
+        ferrisWheel.position.y += 4;
+
+        var ferrisWheelComplete = new THREE.Object3D();
+        var ferrisWheelBase = new THREE.Object3D();
+        var base1 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), darkGrayMaterial);
+        base1.rotateZ(Math.PI / 3);
+        base1.position.y += 1.8;
+        base1.position.z += 0.65;
+        base1.position.x -= 1;
+        var base2 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), darkGrayMaterial);
+        base2.rotateZ(-Math.PI / 3);
+        base2.position.y += 1.8;
+        base2.position.z += 0.65;
+        base2.position.x += 1;
+        var base3 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), darkGrayMaterial);
+        base3.rotateZ(Math.PI / 3);
+        base3.position.y += 1.8;
+        base3.position.z -= 0.55;
+        base3.position.x -= 1;
+        var base4 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), darkGrayMaterial);
+        base4.rotateZ(-Math.PI / 3);
+        base4.position.y += 1.8;
+        base4.position.z -= 0.55;
+        base4.position.x += 1;
+        var base5 = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 3), darkGrayMaterial);
+
+        ferrisWheelBase.add(base1);
+        ferrisWheelBase.add(base2);
+        ferrisWheelBase.add(base3);
+        ferrisWheelBase.add(base4);
+        ferrisWheelBase.add(base5);
+
+        ferrisWheelComplete.add(ferrisWheel);
+        ferrisWheelComplete.add(ferrisWheelBase);
+
+        ferrisWheelComplete.position.x += 10;
+        ferrisWheelComplete.position.z -= 10;
+
+
         scene.add(plane);
         scene.add(car);
         scene.add(carouselComplete);
+        scene.add(ferrisWheelComplete);
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -777,6 +872,12 @@
             camera.position.x = cam_xpos;
             camera.position.z = cam_zpos;
             camera.rotation.y = ang_rad;
+
+            ferrisWheel.rotation.z += 0.01;
+            basket1.rotation.z -= 0.01
+            basket2.rotation.z -= 0.01
+            basket3.rotation.z -= 0.01
+            basket4.rotation.z -= 0.01
 
             if (droneReleased) {
                 if (drone.position.y < 2.5) {
