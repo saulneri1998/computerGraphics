@@ -1,0 +1,629 @@
+<html>
+
+<head>
+    <title> Gears </title>
+    <style>
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+
+<body>
+    <script src="three.min.js">
+    </script>
+
+    <script>
+        window.addEventListener('keydown', doKeyDown, true);
+        var cam_zpos = 4.0;
+        var cam_xpos = 0.0;
+        var Pi = 3.1415926535;
+        var ang_rad = 0;
+        var up_down_ang = 0;
+
+        var carAngle = 0;
+        var tireAngle = 0;
+
+        function doKeyDown(evt) {
+            evt.preventDefault();
+            console.log("Tecla picada: " + evt.keyCode);
+            switch (evt.keyCode) {
+                case 38:
+                    /* Up arrow was pressed */
+                    var dx = 0.5 * Math.sin(ang_rad);
+                    var dz = 0.5 * Math.cos(ang_rad);
+                    cam_zpos -= dz;
+                    cam_xpos -= dx;
+                    break;
+                case 40:
+                    /* Down arrow was pressed */
+                    var dx = 0.5 * Math.sin(ang_rad);
+                    var dz = 0.5 * Math.cos(ang_rad);
+                    cam_zpos += dz;
+                    cam_xpos += dx;
+                    break;
+                case 37:
+                    /* Left arrow was pressed */
+                    ang_rad += (5 * Pi / 180);
+                    break;
+                case 39:
+                    /* Right arrow was pressed */
+                    ang_rad -= (5 * Pi / 180);
+                    break;
+                case 87:
+                    /* W was pressed */
+                    camera.position.y += 0.5;
+                    break;
+                case 83:
+                    /* S was pressed */
+                    camera.position.y -= 0.5;
+                    break;
+                case 65:
+                    /* A was pressed */
+                    var dx = 0.5 * Math.sin(ang_rad + (Pi / 2));
+                    var dz = 0.5 * Math.cos(ang_rad + (Pi / 2));
+                    cam_zpos -= dz;
+                    cam_xpos -= dx;
+                    break;
+                case 68:
+                    /* D was pressed */
+                    var dx = 0.5 * Math.sin(ang_rad - (Pi / 2));
+                    var dz = 0.5 * Math.cos(ang_rad - (Pi / 2));
+                    cam_zpos -= dz;
+                    cam_xpos -= dx;
+                    break;
+
+                    /* - - - Abrir y cerrar puertas - - - */
+                case 74:
+                    /*J pressed  - - - close door*/
+                    if (carDoor1.rotation.y > -Math.PI / 2) {
+                        carDoor1.rotation.y -= 0.05;
+                    }
+                    if (carDoor2.rotation.y < -Math.PI / 2) {
+                        carDoor2.rotation.y += 0.05;
+                    }
+                    break;
+                case 85:
+                    /*U pressed  - - - open door*/
+                    if (carDoor1.rotation.y < -0.43) {
+                        carDoor1.rotation.y += 0.05;
+                    }
+                    if (carDoor2.rotation.y > -2.7) {
+                        carDoor2.rotation.y -= 0.05;
+                    }
+                    break;
+
+                    /* - - - Open close hood - - - */
+                case 82:
+                    /*R pressed  - - - close hood*/
+                    if (carHoodTop.rotation.x < -Math.PI / 2) {
+                        carHoodTop.rotation.x += .05;
+                    }
+                    break;
+
+                case 89:
+                    /*Y pressed  - - - open hood */
+                    if (carHoodTop.rotation.x > -2.5) {
+                        carHoodTop.rotation.x -= .05;
+                    }
+                    break;
+
+                    /* - - - Open close trunk - - - */
+                case 86:
+                    /*V pressed  - - - open trunk*/
+                    if (carTrunkTop.rotation.x < 2.5) {
+                        carTrunkTop.rotation.x += .05;
+                    }
+                    break;
+
+                case 66:
+                    /*B pressed  - - - close trunk */
+                    if (carTrunkTop.rotation.x > Math.PI / 2) {
+                        carTrunkTop.rotation.x -= .05;
+                    }
+                    break;
+
+                    /* - - - Rotate wheels - - - */
+                case 72:
+                    /*H pressed  - - - turn right*/
+                    if (carTire1.rotation.y > -0.8) {
+                        carTire1.rotation.y -= 0.1;
+                        carTire2.rotation.y -= 0.1;
+                        tireAngle -= 0.1;
+                    }
+                    break;
+                case 70:
+                    /*F pressed  - - - turn left*/
+                    if (carTire1.rotation.y < 0.8) {
+                        carTire1.rotation.y += 0.1;
+                        carTire2.rotation.y += 0.1;
+                        tireAngle += 0.1;
+                    }
+                    break;
+
+                    /* - - - Move car - - - */
+                case 84:
+                    /*H pressed  - - - move forward*/
+                    car.position.z += 1.5 * Math.cos(carAngle + tireAngle);
+                    car.position.x += 1.5 * Math.sin(carAngle + tireAngle);
+                    car.rotateY(tireAngle);
+                    carAngle += tireAngle;
+                    break;
+                case 71:
+                    /*F pressed  - - - move backward*/
+                    car.position.z -= 1.5 * Math.cos(carAngle - tireAngle);
+                    car.position.x -= 1.5 * Math.sin(carAngle - tireAngle);
+                    car.rotateY(-tireAngle);
+                    carAngle -= tireAngle;
+                    break;
+            }
+        }
+
+        // three basic components of a scene
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
+        var renderer = new THREE.WebGLRenderer();
+
+        var darkGrayMaterial = new THREE.MeshLambertMaterial({
+            color: 0x555555
+        });
+        var blackMaterial = new THREE.MeshLambertMaterial({
+            color: 0x000000
+        });
+        // var redMaterial = new THREE.MeshLambertMaterial({
+        //         color: 0xff1222
+        //     })
+        // var darkRedMaterial = new THREE.MeshLambertMaterial({
+        //     color: 0x800000
+        // })
+        var windowMaterial = new THREE.MeshPhongMaterial({
+            color: 0x2194ce,
+            shininess: 100,
+            transparent: true,
+            opacity: 0.6
+        });
+        var metalMaterial = new THREE.MeshLambertMaterial({
+            map: THREE.ImageUtils.loadTexture("metal2.jpg")
+        });
+        var darkRedMaterial = new THREE.MeshLambertMaterial({
+            map: THREE.ImageUtils.loadTexture("darkRedMetal.jpg")
+        });
+        var redMaterial = new THREE.MeshLambertMaterial({
+            map: THREE.ImageUtils.loadTexture("redMetal.jpg")
+        });
+
+        var extrudeSettings = {
+            steps: 2,
+            depth: 0.1,
+            bevelEnabled: false
+        };
+
+        var car = new THREE.Object3D();
+
+        var carBottomShape = new THREE.Shape();
+        carBottomShape.moveTo(-1, 1.5);
+        carBottomShape.lineTo(1, 1.5);
+        carBottomShape.lineTo(1, 1.3);
+        carBottomShape.lineTo(0.8, 1.3);
+        carBottomShape.lineTo(0.8, -1.3);
+        carBottomShape.lineTo(1, -1.3);
+        carBottomShape.lineTo(1, -1.5);
+        carBottomShape.lineTo(-1, -1.5);
+        carBottomShape.lineTo(-1, -1.3);
+        carBottomShape.lineTo(-0.8, -1.3);
+        carBottomShape.lineTo(-0.8, 1.3);
+        carBottomShape.lineTo(-1, 1.3);
+        carBottomShape.lineTo(-1, 1.5);
+        var carBottomGeom = new THREE.ExtrudeGeometry(carBottomShape, extrudeSettings);
+        var carBottom = new THREE.Mesh(carBottomGeom, darkGrayMaterial);
+        carBottom.rotateX(Math.PI / 2);
+
+        var carFrontShape = new THREE.Shape();
+        carFrontShape.moveTo(-0.8, 0.3);
+        carFrontShape.lineTo(-0.5, 0.3);
+        carFrontShape.lineTo(-0.5, -0.1);
+        carFrontShape.lineTo(0.5, -0.1);
+        carFrontShape.lineTo(0.5, 0.3);
+        carFrontShape.lineTo(0.8, 0.3);
+        carFrontShape.lineTo(0.8, -0.3);
+        carFrontShape.lineTo(-0.8, -0.3);
+        carFrontShape.lineTo(-0.8, 0.3);
+        var carFrontGeom = new THREE.ExtrudeGeometry(carFrontShape, extrudeSettings);
+        var carFront = new THREE.Mesh(carFrontGeom, redMaterial);
+        carFront.position.z += 1.3;
+        carFront.position.y += 0.3;
+
+        var carSideShape = new THREE.Shape();
+        carSideShape.moveTo(-1.3, 0.2);
+        carSideShape.lineTo(-0.5, 0.2);
+
+        // carSideShape.lineTo(0, 0.5);
+
+        carSideShape.lineTo(-0.2, 0.4);
+        carSideShape.lineTo(-0.2, 0);
+        carSideShape.lineTo(0.4, 0);
+
+        carSideShape.lineTo(0.5, 0.3);
+        carSideShape.lineTo(1.3, 0.3);
+        carSideShape.lineTo(1.3, -0.3);
+        carSideShape.lineTo(1.1, -0.3);
+        carSideShape.lineTo(1.1, -0.15);
+        carSideShape.lineTo(0.9, 0);
+        carSideShape.lineTo(0.7, 0);
+        carSideShape.lineTo(0.5, -0.15);
+        carSideShape.lineTo(0.5, -0.3);
+        carSideShape.lineTo(-0.5, -0.3);
+        carSideShape.lineTo(-0.5, -0.15);
+        carSideShape.lineTo(-0.7, 0);
+        carSideShape.lineTo(-0.9, 0);
+        carSideShape.lineTo(-1.1, -0.15);
+        carSideShape.lineTo(-1.1, -0.3);
+        carSideShape.lineTo(-1.3, -0.3);
+        carSideShape.lineTo(-1.3, 0.2);
+        var carSideGeom = new THREE.ExtrudeGeometry(carSideShape, extrudeSettings);
+
+        var carSide1 = new THREE.Mesh(carSideGeom, redMaterial);
+        carSide1.rotateY(Math.PI / 2);
+        carSide1.position.x -= 0.8;
+        carSide1.position.y += 0.3;
+
+        var carSide2 = new THREE.Mesh(carSideGeom, redMaterial);
+        carSide2.rotateY(Math.PI / 2);
+        carSide2.position.x += 0.7;
+        carSide2.position.y += 0.3;
+
+        var carFenderShape = new THREE.Shape();
+        carFenderShape.moveTo(-0.4, -0.15);
+        carFenderShape.lineTo(-0.4, 0.05);
+        carFenderShape.lineTo(-0.15, 0.25);
+        carFenderShape.lineTo(0.15, 0.25);
+        carFenderShape.lineTo(0.4, 0.05);
+        carFenderShape.lineTo(0.4, -0.15);
+        carFenderShape.lineTo(0.3, -0.15);
+        carFenderShape.lineTo(0.3, 0);
+        carFenderShape.lineTo(0.1, 0.15);
+        carFenderShape.lineTo(-0.1, 0.15);
+        carFenderShape.lineTo(-0.3, 0);
+        carFenderShape.lineTo(-0.3, -0.15);
+        carFenderShape.lineTo(-0.4, -0.15);
+
+        var carFenderGeom = new THREE.ExtrudeGeometry(carFenderShape, extrudeSettings);
+        var carFender1 = new THREE.Mesh(carFenderGeom, darkGrayMaterial);
+        carFender1.rotateY(Math.PI / 2);
+        carFender1.position.x -= 0.9;
+        carFender1.position.z -= 0.8;
+        carFender1.position.y += 0.1;
+
+        var carFender2 = new THREE.Mesh(carFenderGeom, darkGrayMaterial);
+        carFender2.rotateY(Math.PI / 2);
+        carFender2.position.x -= 0.9;
+        carFender2.position.z += 0.8;
+        carFender2.position.y += 0.1;
+
+        var carFender3 = new THREE.Mesh(carFenderGeom, darkGrayMaterial);
+        carFender3.rotateY(Math.PI / 2);
+        carFender3.position.x += 0.8;
+        carFender3.position.z -= 0.8;
+        carFender3.position.y += 0.1;
+
+        var carFender4 = new THREE.Mesh(carFenderGeom, darkGrayMaterial);
+        carFender4.rotateY(Math.PI / 2);
+        carFender4.position.x += 0.8;
+        carFender4.position.z += 0.8;
+        carFender4.position.y += 0.1;
+
+        var carRearShape = new THREE.Shape();
+        carRearShape.moveTo(-0.8, 0.3);
+        carRearShape.lineTo(-0.6, 0.3);
+        carRearShape.lineTo(-0.3, 0.1);
+        carRearShape.lineTo(0.3, 0.1);
+        carRearShape.lineTo(0.6, 0.3);
+        carRearShape.lineTo(0.8, 0.3);
+        carRearShape.lineTo(0.8, -0.3);
+        carRearShape.lineTo(-0.8, -0.3);
+        carRearShape.lineTo(-0.8, 0.3);
+        var carRearGeom = new THREE.ExtrudeGeometry(carRearShape, extrudeSettings);
+        var carRear = new THREE.Mesh(carRearGeom, redMaterial);
+        // carRear.rotateY(Math.PI / 2);
+        carRear.position.z -= 1.3;
+        carRear.position.y += 0.3;
+
+        var carDoorShape = new THREE.Shape();
+        carDoorShape.moveTo(-0.7, 0.3);
+        carDoorShape.lineTo(-0.6, 0.5);
+        carDoorShape.lineTo(0, 0.5);
+        carDoorShape.lineTo(0, -0.5);
+        carDoorShape.lineTo(-0.6, -0.5);
+        carDoorShape.lineTo(-0.7, -0.2);
+        carDoorShape.lineTo(-0.7, 0.3);
+        var carDoorHolePath = new THREE.Path();
+        carDoorHolePath.moveTo(-0.55, 0.4);
+        carDoorHolePath.lineTo(-0.1, 0.4);
+        carDoorHolePath.lineTo(-0.1, -0.3);
+        carDoorHolePath.lineTo(-0.55, -0.3);
+        carDoorHolePath.lineTo(-0.55, 0.4);
+        carDoorShape.holes = [carDoorHolePath];
+        var carDoorGeom = new THREE.ExtrudeGeometry(carDoorShape, extrudeSettings);
+
+        var doorWindowShape = new THREE.Shape();
+        doorWindowShape.moveTo(-0.55, 0.2);
+        doorWindowShape.lineTo(-0.1, 0.2);
+        doorWindowShape.lineTo(-0.1, -0.3);
+        doorWindowShape.lineTo(-0.55, -0.3);
+        doorWindowShape.lineTo(-0.55, 0.2);
+        var doorWindowGeom = new THREE.ExtrudeGeometry(doorWindowShape, extrudeSettings);
+
+        var carDoor1 = new THREE.Mesh(carDoorGeom, redMaterial);
+        var carDoor2 = new THREE.Mesh(carDoorGeom, redMaterial);
+        var doorWindow1 = new THREE.Mesh(doorWindowGeom, windowMaterial);
+        var doorWindow2 = new THREE.Mesh(doorWindowGeom, windowMaterial);
+        carDoor1.rotateY(-Math.PI / 2);
+        carDoor2.rotateY(-Math.PI / 2);
+        carDoor1.position.x -= 0.7;
+        carDoor1.position.z += 0.2;
+        carDoor1.position.y += 0.8;
+        carDoor2.position.x += 0.8;
+        carDoor2.position.z += 0.2;
+        carDoor2.position.y += 0.8;
+
+        carDoor1.add(doorWindow1);
+        carDoor2.add(doorWindow2);
+
+        var carHoodTopShape = new THREE.Shape();
+        carHoodTopShape.moveTo(-0.8, 0);
+        carHoodTopShape.lineTo(0.8, 0);
+        carHoodTopShape.lineTo(0.8, -0.8);
+        carHoodTopShape.lineTo(0.5, -0.8);
+        carHoodTopShape.lineTo(0.5, -0.9);
+        carHoodTopShape.lineTo(-0.5, -0.9);
+        carHoodTopShape.lineTo(-0.5, -0.8);
+        carHoodTopShape.lineTo(-0.8, -0.8);
+        carHoodTopShape.lineTo(-0.8, -0.8);
+        carHoodTopShape.lineTo(-0.8, 0);
+        var carHoodTopGeom = new THREE.ExtrudeGeometry(carHoodTopShape, extrudeSettings);
+        var carHoodTop = new THREE.Mesh(carHoodTopGeom, darkRedMaterial);
+        carHoodTop.rotateX(-Math.PI / 2);
+        carHoodTop.position.z += 0.5;
+        carHoodTop.position.y += 0.5;
+
+        var carHoodFrontShape = new THREE.Shape();
+        carHoodFrontShape.moveTo(-0.5, 0.15);
+        carHoodFrontShape.lineTo(0.5, 0.15);
+        carHoodFrontShape.lineTo(0.5, -0.15);
+        carHoodFrontShape.lineTo(-0.5, -0.15);
+        carHoodFrontShape.lineTo(-0.5, 0.15);
+
+        var carHoodFrontHole = new THREE.Path();
+        carHoodFrontHole.moveTo(-0.33, 0.12);
+        carHoodFrontHole.lineTo(-0.27, 0.12);
+        carHoodFrontHole.lineTo(-0.27, -0.12);
+        carHoodFrontHole.lineTo(-0.33, -0.12);
+        carHoodFrontHole.lineTo(-0.33, 0.12);
+        carHoodFrontShape.holes.push(carHoodFrontHole);
+
+        carHoodFrontHole = new THREE.Path();
+        carHoodFrontHole.moveTo(-0.13, 0.12);
+        carHoodFrontHole.lineTo(-0.07, 0.12);
+        carHoodFrontHole.lineTo(-0.07, -0.12);
+        carHoodFrontHole.lineTo(-0.13, -0.12);
+        carHoodFrontHole.lineTo(-0.13, 0.12);
+        carHoodFrontShape.holes.push(carHoodFrontHole);
+
+        carHoodFrontHole = new THREE.Path();
+        carHoodFrontHole.moveTo(0.13, 0.12);
+        carHoodFrontHole.lineTo(0.07, 0.12);
+        carHoodFrontHole.lineTo(0.07, -0.12);
+        carHoodFrontHole.lineTo(0.13, -0.12);
+        carHoodFrontHole.lineTo(0.13, 0.12);
+        carHoodFrontShape.holes.push(carHoodFrontHole);
+
+        carHoodFrontHole = new THREE.Path();
+        carHoodFrontHole.moveTo(0.33, 0.12);
+        carHoodFrontHole.lineTo(0.27, 0.12);
+        carHoodFrontHole.lineTo(0.27, -0.12);
+        carHoodFrontHole.lineTo(0.33, -0.12);
+        carHoodFrontHole.lineTo(0.33, 0.12);
+        carHoodFrontShape.holes.push(carHoodFrontHole);
+
+        var carHoodFrontGeom = new THREE.ExtrudeGeometry(carHoodFrontShape, extrudeSettings);
+        var carHoodFront = new THREE.Mesh(carHoodFrontGeom, darkRedMaterial);
+        carHoodFront.rotateX(-Math.PI / 2);
+        carHoodFront.position.y -= 0.9;
+        carHoodFront.position.z -= 0.15;
+
+        carHoodTop.add(carHoodFront);
+
+
+        var carTrunkTopShape = new THREE.Shape();
+        carTrunkTopShape.moveTo(-0.8, 0);
+        carTrunkTopShape.lineTo(0.8, 0);
+        carTrunkTopShape.lineTo(0.8, -0.8);
+        carTrunkTopShape.lineTo(-0.8, -0.8);
+        carTrunkTopShape.lineTo(-0.8, 0);
+        var carTrunkTopGeom = new THREE.ExtrudeGeometry(carTrunkTopShape, extrudeSettings);
+        var carTrunkTop = new THREE.Mesh(carTrunkTopGeom, darkRedMaterial);
+        carTrunkTop.rotateX(Math.PI / 2);
+        carTrunkTop.position.z -= 0.5;
+        carTrunkTop.position.y += 0.7;
+
+        var carTrunkFrontShape = new THREE.Shape();
+        carTrunkFrontShape.moveTo(-0.6, 0.3);
+        carTrunkFrontShape.lineTo(0.6, 0.3);
+        carTrunkFrontShape.lineTo(0.3, 0.1);
+        carTrunkFrontShape.lineTo(-0.3, 0.1);
+        carTrunkFrontShape.lineTo(-0.6, 0.3);
+        var carTrunkFrontGeom = new THREE.ExtrudeGeometry(carTrunkFrontShape, extrudeSettings);
+        var carTrunkFront = new THREE.Mesh(carTrunkFrontGeom, darkRedMaterial);
+        carTrunkFront.rotateX(-Math.PI / 2);
+        carTrunkFront.position.z += 0.4;
+        carTrunkFront.position.y -= 0.8;
+        carTrunkTop.add(carTrunkFront);
+
+        var carRoofShape = new THREE.Shape();
+        carRoofShape.moveTo(-0.7, -0.2);
+        carRoofShape.lineTo(-0.55, -0.2);
+        carRoofShape.lineTo(-0.55, -0.1);
+        carRoofShape.lineTo(0, -0.1);
+        carRoofShape.lineTo(0, 0);
+        carRoofShape.lineTo(-0.6, 0);
+        carRoofShape.lineTo(-0.7, -0.2);
+        var carRoofGeom = new THREE.ExtrudeGeometry(carRoofShape, {
+            steps: 2,
+            depth: 1.4,
+            bevelEnabled: false
+        });
+        var carRoof = new THREE.Mesh(carRoofGeom, darkRedMaterial);
+        carRoof.rotateY(-Math.PI / 2);
+        carRoof.position.y += 1.3;
+        carRoof.position.x += 0.7;
+        carRoof.position.z += 0.2;
+
+        var carRearWindow = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.5, 0.1, 1, 1, 1), windowMaterial);
+        carRearWindow.rotateY(Math.PI / 2);
+        carRearWindow.position.x -= 0.65;
+        carRearWindow.position.y -= 0.45;
+        carRearWindow.position.z += 0.7;
+
+        var carFrontWindow = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.5, 0.1, 1, 1, 1), windowMaterial);
+        carFrontWindow.rotateY(Math.PI / 2);
+        carFrontWindow.position.x -= 0.05;
+        carFrontWindow.position.y -= 0.35;
+        carFrontWindow.position.z += 0.7;
+
+        var carWindowFrame = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.35, 0.05, 1, 1, 1), darkRedMaterial);
+        carWindowFrame.rotateY(Math.PI / 2);
+        carWindowFrame.rotateX(-Math.tan(4 / 5.2));
+        carWindowFrame.position.x += 0.15;
+        carWindowFrame.position.y -= 0.67;
+        carWindowFrame.position.z += 0.7;
+
+        carRoof.add(carRearWindow);
+        carRoof.add(carFrontWindow);
+        carRoof.add(carWindowFrame);
+
+        var carRimGeom = new THREE.ExtrudeGeometry(gearShape(0.05, 0.22), extrudeSettings);
+
+        var carTire1 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.15, 128, 128), blackMaterial);
+        var carRim1 = new THREE.Mesh(carRimGeom, metalMaterial);
+        carRim1.rotateX(Math.PI / 2);
+        carTire1.add(carRim1);
+        carTire1.rotateZ(Math.PI / 2);
+        carTire1.position.x += 0.8;
+        carTire1.position.z += 0.8;
+
+        var carTire2 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.15, 128, 128), blackMaterial);
+        var carRim2 = new THREE.Mesh(carRimGeom, metalMaterial);
+        carRim2.rotateX(Math.PI / 2);
+        carTire2.add(carRim2);
+        carTire2.rotateZ(-Math.PI / 2);
+        carTire2.position.x -= 0.8;
+        carTire2.position.z += 0.8;
+
+        var carTire3 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.15, 128, 128), blackMaterial);
+        var carRim3 = new THREE.Mesh(carRimGeom, metalMaterial);
+        carRim3.rotateX(Math.PI / 2);
+        carTire3.add(carRim3);
+        carTire3.rotateZ(Math.PI / 2);
+        carTire3.position.x += 0.8;
+        carTire3.position.z -= 0.8;
+
+        var carTire4 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.15, 128, 128), blackMaterial);
+        var carRim4 = new THREE.Mesh(carRimGeom, metalMaterial);
+        carRim4.rotateX(Math.PI / 2);
+        carTire4.add(carRim4);
+        carTire4.rotateZ(-Math.PI / 2);
+        carTire4.position.x -= 0.8;
+        carTire4.position.z -= 0.8;
+
+        // car.rotateY(-Math.PI / 2);
+
+        car.add(carBottom);
+        car.add(carFront);
+        car.add(carSide1);
+        car.add(carSide2);
+        car.add(carFender1);
+        car.add(carFender2);
+        car.add(carFender3);
+        car.add(carFender4);
+        car.add(carRear);
+        car.add(carDoor1);
+        car.add(carDoor2);
+        car.add(carHoodTop);
+        car.add(carTrunkTop);
+        car.add(carRoof);
+        car.add(carTire1);
+        car.add(carTire2);
+        car.add(carTire3);
+        car.add(carTire4);
+
+
+        // var planeGeom = new THREE.PlaneGeometry(10, 10, 10, 10);
+        // var plane = new THREE.Mesh(planeGeom, darkGrayMaterial);
+
+        // plane.geometry.rotateX(Math.PI / 2);
+
+        // scene.add(plane);
+        scene.add(car);
+
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        camera.position.z = cam_zpos;
+
+        // create  point lights
+        var pointLight = new THREE.PointLight(0xFFFFFF);
+        var pointLight2 = new THREE.PointLight(0xFFFFAA);
+
+        pointLight.position.x = 40;
+        pointLight.position.y = 50;
+        pointLight.position.z = 40;
+
+        scene.add(pointLight);
+
+        pointLight2.position.x = -40;
+        pointLight2.position.y = 50;
+        pointLight2.position.z = -40;
+
+        scene.add(pointLight2);
+
+        renderer.setClearColor(0xFAF5DB, 1);
+
+        var render = function() {
+            requestAnimationFrame(render);
+            camera.position.x = cam_xpos;
+            camera.position.z = cam_zpos;
+            camera.rotation.y = ang_rad;
+
+            // car.rotation.y += 0.02;
+            // carDoor1.rotation.y += 0.01;
+            // carTire1.rotation.y += 0.01;
+            // carTire2.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        };
+
+        function gearShape(r1, r2) {
+            var shape = new THREE.Shape();
+            shape.moveTo(r1, 0);
+            var angle = 0;
+            for (i = 0; i < 12; i++) {
+                shape.lineTo(r1 * Math.cos(angle), r1 * Math.sin(angle));
+                angle += 1 / 18 * Math.PI;
+                shape.lineTo(r1 * Math.cos(angle), r1 * Math.sin(angle));
+                angle += 1 / 36 * Math.PI;
+                shape.lineTo(r2 * Math.cos(angle), r2 * Math.sin(angle));
+                angle += 1 / 18 * Math.PI;
+                shape.lineTo(r2 * Math.cos(angle), r2 * Math.sin(angle));
+                angle += 1 / 36 * Math.PI;
+            }
+            shape.lineTo(r1, 0);
+
+            return (shape);
+        }
+
+        render();
+    </script>
+</body>
+
+</html>
