@@ -380,6 +380,26 @@
         carDoor1.add(doorWindow1);
         carDoor2.add(doorWindow2);
 
+        var rearMirror1 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.1, 128, 1), darkGrayMaterial);
+        rearMirror1.position.z += 0.15;
+        rearMirror1.position.x += 0.02;
+        rearMirror1.rotateX(Math.PI / 2);
+        var rearMirror2 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.1, 128, 1), darkGrayMaterial);
+        rearMirror2.position.z -= 0.05;
+        rearMirror2.position.x -= 0.02;
+        rearMirror2.rotateX(Math.PI / 2);
+
+        var rearMirrorBody1 = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.2, 0.15, 1, 1, 1), redMaterial);
+        rearMirrorBody1.position.y += 0.1;
+        var rearMirrorBody2 = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.2, 0.15, 1, 1, 1), redMaterial);
+        rearMirrorBody2.position.y -= 0.1;
+
+        rearMirror1.add(rearMirrorBody1);
+        rearMirror2.add(rearMirrorBody2);
+
+        carDoor1.add(rearMirror1);
+        carDoor2.add(rearMirror2);
+
         var carHoodTopShape = new THREE.Shape();
         carHoodTopShape.moveTo(-0.8, 0);
         carHoodTopShape.lineTo(0.8, 0);
