@@ -18,8 +18,10 @@
 
     <script>
         window.addEventListener('keydown', doKeyDown, true);
-        var cam_zpos = 4.0;
+        var cam_zpos = 10.0;
         var cam_xpos = 0.0;
+        var cam_ypos = 5.0;
+
         var Pi = 3.1415926535;
         var ang_rad = 0;
         var up_down_ang = 0;
@@ -28,6 +30,12 @@
         var tireAngle = 0;
 
         var droneReleased = false;
+
+        var horse1Up = true;
+        var horse2Up = false;
+        var horse3Up = true;
+        var horse4Up = false;
+        var horse5Up = true;
 
         function doKeyDown(evt) {
             evt.preventDefault();
@@ -201,6 +209,10 @@
         });
         var redMaterial = new THREE.MeshLambertMaterial({
             map: THREE.ImageUtils.loadTexture("redMetal.jpg")
+        });
+
+        var lightBlueMaterial = new THREE.MeshLambertMaterial({
+            color: 0xA3DCF8
         });
 
         var extrudeSettings = {
@@ -566,8 +578,6 @@
         carTire4.position.x -= 0.8;
         carTire4.position.z -= 0.8;
 
-        // car.rotateY(-Math.PI / 2);
-
         car.add(carBottom);
         car.add(carFront);
         car.add(carSide1);
@@ -586,8 +596,6 @@
         car.add(carTire2);
         car.add(carTire3);
         car.add(carTire4);
-
-
 
         var manager = new THREE.LoadingManager();
         manager.onStart = function(url, itemsLoaded, itemsTotal) {
@@ -611,7 +619,7 @@
         var prop2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.03, 1, 1, 1), darkGrayMaterial);
         var prop3 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.03, 1, 1, 1), darkGrayMaterial);
         var prop4 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.03, 1, 1, 1), darkGrayMaterial);
-        var drone = THREE.Object3D();
+        var drone = new THREE.Object3D();
         var loader = new THREE.OBJLoader(manager);
         loader.load('drone/model.obj', function(object) {
             drone = object;
@@ -634,21 +642,117 @@
             object.position.y += 1.45;
             car.add(object);
         });
+        car.position.z -= 10;
+
+        // Plane
+        var planeGeom = new THREE.PlaneGeometry(40, 40, 40, 10);
+        var plane = new THREE.Mesh(planeGeom, darkGrayMaterial);
+        plane.geometry.rotateX(-Math.PI / 2);
+        plane.position.y -= 0.25;
 
 
-        // var planeGeom = new THREE.PlaneGeometry(10, 10, 10, 10);
-        // var plane = new THREE.Mesh(planeGeom, darkGrayMaterial);
+        // Carousel
+        var carousel = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 0.1, 128, 1), lightBlueMaterial);
+        var loader = new THREE.OBJLoader(manager);
+        var horse1 = new THREE.Object3D();
+        var horse2 = new THREE.Object3D();
+        var horse3 = new THREE.Object3D();
+        var horse4 = new THREE.Object3D();
+        var horse5 = new THREE.Object3D();
 
-        // plane.geometry.rotateX(Math.PI / 2);
+        loader.load('horse/WildHorse.obj', function(object) {
+            horse1 = object;
+            object.scale.set(0.08, 0.08, 0.08);
+            object.rotateY(Math.PI * 2 / 5);
+            object.position.x -= 0.5253;
+            object.position.z += 1.6167;
+            object.position.y += 0.2;
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            tube.position.x -= 0.5253;
+            tube.position.z += 1.6167;
+            tube.position.y += 1;
+            carousel.add(tube);
+            carousel.add(object);
+        });
+        loader.load('horse/WildHorse.obj', function(object) {
+            horse2 = object;
+            object.scale.set(0.08, 0.08, 0.08);
+            object.rotateY(Math.PI * 2 / 5 * 2);
+            object.position.x -= -1.3753;
+            object.position.z += 0.9992;
+            object.position.y += 0.1;
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            tube.position.x -= -1.3753;
+            tube.position.z += 0.9992;
+            tube.position.y += 1;
+            carousel.add(tube);
+            carousel.add(object);
+        });
+        loader.load('horse/WildHorse.obj', function(object) {
+            horse3 = object;
+            object.scale.set(0.08, 0.08, 0.08);
+            object.rotateY(Math.PI * 2 / 5 * 3);
+            object.position.x -= -1.3753;
+            object.position.z += -0.9992;
+            object.position.y += 0.9;
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            tube.position.x -= -1.3753;
+            tube.position.z += -0.9992;
+            tube.position.y += 1;
+            carousel.add(tube);
+            carousel.add(object);
+        });
+        loader.load('horse/WildHorse.obj', function(object) {
+            horse4 = object;
+            object.scale.set(0.08, 0.08, 0.08);
+            object.rotateY(Math.PI * 2 / 5 * 4);
+            object.position.x -= 0.5253;
+            object.position.z += -1.6167;
+            object.position.y += 0.5;
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            tube.position.x -= 0.5253;
+            tube.position.z += -1.6167;
+            tube.position.y += 1;
+            carousel.add(tube);
+            carousel.add(object);
+        });
+        loader.load('horse/WildHorse.obj', function(object) {
+            horse5 = object;
+            object.scale.set(0.08, 0.08, 0.08);
+            object.rotateY(Math.PI * 2 / 5 * 5);
+            object.position.x -= 1.7;
+            object.position.z += 0;
+            object.position.y += 0.8;
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            tube.position.x -= 1.7;
+            tube.position.z += 0;
+            tube.position.y += 1;
+            carousel.add(tube);
+            carousel.add(object);
+        });
 
-        // scene.add(plane);
+        centerCarousel = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 2, 128, 1), lightBlueMaterial);
+        centerCarousel.position.y += 1;
+        carousel.add(centerCarousel);
+
+        var carouselTop = new THREE.Mesh(new THREE.ConeGeometry(2.5, 2.5, 8, 1), darkGrayMaterial);
+        carouselTop.position.y += 3.2;
+
+        var carouselComplete = new THREE.Object3D();
+        carouselComplete.add(carousel);
+        carouselComplete.add(carouselTop);
+
+        carouselComplete.position.x += 10;
+
+        scene.add(plane);
         scene.add(car);
-
+        scene.add(carouselComplete);
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
         camera.position.z = cam_zpos;
+        camera.position.y = cam_ypos;
 
         // create  point lights
         var pointLight = new THREE.PointLight(0xFFFFFF);
@@ -687,6 +791,58 @@
                     drone.position.y -= 0.1;
                 }
             }
+
+            if (horse1Up && horse1.position.y < 0.9) {
+                horse1.position.y += 0.02;
+            } else if (horse1Up) {
+                horse1Up = !horse1Up;
+            } else if (!horse1Up && horse1.position.y > 0.1) {
+                horse1.position.y -= 0.02;
+            } else {
+                horse1Up = !horse1Up;
+            }
+
+            if (horse2Up && horse2.position.y < 0.9) {
+                horse2.position.y += 0.02;
+            } else if (horse2Up) {
+                horse2Up = !horse2Up;
+            } else if (!horse2Up && horse2.position.y > 0.1) {
+                horse2.position.y -= 0.02;
+            } else {
+                horse2Up = !horse2Up;
+            }
+
+            if (horse3Up && horse3.position.y < 0.9) {
+                horse3.position.y += 0.02;
+            } else if (horse3Up) {
+                horse3Up = !horse3Up;
+            } else if (!horse3Up && horse3.position.y > 0.1) {
+                horse3.position.y -= 0.02;
+            } else {
+                horse3Up = !horse3Up;
+            }
+
+            if (horse4Up && horse4.position.y < 0.9) {
+                horse4.position.y += 0.02;
+            } else if (horse4Up) {
+                horse4Up = !horse4Up;
+            } else if (!horse4Up && horse4.position.y > 0.1) {
+                horse4.position.y -= 0.02;
+            } else {
+                horse4Up = !horse4Up;
+            }
+
+            if (horse5Up && horse5.position.y < 0.9) {
+                horse5.position.y += 0.02;
+            } else if (horse5Up) {
+                horse5Up = !horse5Up;
+            } else if (!horse5Up && horse5.position.y > 0.1) {
+                horse5.position.y -= 0.02;
+            } else {
+                horse5Up = !horse5Up;
+            }
+
+            carousel.rotation.y += 0.015;
 
             renderer.render(scene, camera);
         };
