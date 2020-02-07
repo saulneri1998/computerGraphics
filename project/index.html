@@ -13,6 +13,8 @@
 <body>
     <script src="three.min.js">
     </script>
+    <script src="OBJLoader.js">
+    </script>
 
     <script>
         window.addEventListener('keydown', doKeyDown, true);
@@ -24,6 +26,8 @@
 
         var carAngle = 0;
         var tireAngle = 0;
+
+        var droneReleased = false;
 
         function doKeyDown(evt) {
             evt.preventDefault();
@@ -156,6 +160,12 @@
                     car.position.x -= 1.5 * Math.sin(carAngle - tireAngle);
                     car.rotateY(-tireAngle);
                     carAngle -= tireAngle;
+                    break;
+
+                    /* - - - Control drone - - - */
+                case 88:
+                    /*X pressed  - - - release / reattach drone*/
+                    droneReleased = !droneReleased;
                     break;
             }
         }
@@ -558,6 +568,54 @@
         car.add(carTire4);
 
 
+
+        var manager = new THREE.LoadingManager();
+        manager.onStart = function(url, itemsLoaded, itemsTotal) {
+            console.log('Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
+        };
+
+        manager.onLoad = function() {
+            console.log('Loading complete!');
+        };
+
+
+        manager.onProgress = function(url, itemsLoaded, itemsTotal) {
+            console.log('Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.');
+        };
+
+        manager.onError = function(url) {
+            console.log('There was an error loading ' + url);
+        };
+
+        var prop1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.03, 1, 1, 1), darkGrayMaterial);
+        var prop2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.03, 1, 1, 1), darkGrayMaterial);
+        var prop3 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.03, 1, 1, 1), darkGrayMaterial);
+        var prop4 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.03, 1, 1, 1), darkGrayMaterial);
+        var drone = THREE.Object3D();
+        var loader = new THREE.OBJLoader(manager);
+        loader.load('drone/model.obj', function(object) {
+            drone = object;
+            prop1.position.y += 0.1;
+            prop1.position.x += 0.15;
+            prop1.position.z += 0.57;
+            object.add(prop1);
+            prop2.position.y += 0.1;
+            prop2.position.x -= 0.15;
+            prop2.position.z -= 0.57;
+            object.add(prop2);
+            prop3.position.y += 0.1;
+            prop3.position.x -= 0.57;
+            prop3.position.z += 0.15;
+            object.add(prop3);
+            prop4.position.y += 0.1;
+            prop4.position.x += 0.57;
+            prop4.position.z -= 0.15;
+            object.add(prop4);
+            object.position.y += 1.45;
+            car.add(object);
+        });
+
+
         // var planeGeom = new THREE.PlaneGeometry(10, 10, 10, 10);
         // var plane = new THREE.Mesh(planeGeom, darkGrayMaterial);
 
@@ -596,10 +654,20 @@
             camera.position.z = cam_zpos;
             camera.rotation.y = ang_rad;
 
-            // car.rotation.y += 0.02;
-            // carDoor1.rotation.y += 0.01;
-            // carTire1.rotation.y += 0.01;
-            // carTire2.rotation.y += 0.01;
+            if (droneReleased) {
+                if (drone.position.y < 2.5) {
+                    drone.position.y += 0.1;
+                }
+                prop1.rotation.y += 0.5;
+                prop2.rotation.y += 0.5;
+                prop3.rotation.y += 0.5;
+                prop4.rotation.y += 0.5;
+            } else {
+                if (drone.position.y > 1.45) {
+                    drone.position.y -= 0.1;
+                }
+            }
+
             renderer.render(scene, camera);
         };
 
