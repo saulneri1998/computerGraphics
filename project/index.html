@@ -214,9 +214,20 @@
         var marble2Material = new THREE.MeshLambertMaterial({
             map: THREE.ImageUtils.loadTexture("marble2.jpg")
         });
-
         var lightBlueMaterial = new THREE.MeshLambertMaterial({
-            color: 0xA3DCF8
+            color: 0x4285F4
+        });
+        var googleBlueMaterial = new THREE.MeshLambertMaterial({
+            color: 0x4285F4
+        });
+        var googleRedMaterial = new THREE.MeshLambertMaterial({
+            color: 0xEA4335
+        });
+        var googleGreenMaterial = new THREE.MeshLambertMaterial({
+            color: 0x34A853
+        });
+        var googleYellowMaterial = new THREE.MeshLambertMaterial({
+            color: 0xFBBC05
         });
 
         var extrudeSettings = {
@@ -670,7 +681,7 @@
 
 
         // Carousel
-        var carousel = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 0.1, 128, 1), lightBlueMaterial);
+        var carousel = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 0.1, 128, 1), googleBlueMaterial);
         var loader = new THREE.OBJLoader(manager);
         var horse1 = new THREE.Object3D();
         var horse2 = new THREE.Object3D();
@@ -685,7 +696,7 @@
             object.position.x -= 0.5253;
             object.position.z += 1.6167;
             object.position.y += 0.2;
-            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), googleRedMaterial);
             tube.position.x -= 0.5253;
             tube.position.z += 1.6167;
             tube.position.y += 1;
@@ -699,7 +710,7 @@
             object.position.x -= -1.3753;
             object.position.z += 0.9992;
             object.position.y += 0.1;
-            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), googleRedMaterial);
             tube.position.x -= -1.3753;
             tube.position.z += 0.9992;
             tube.position.y += 1;
@@ -713,7 +724,7 @@
             object.position.x -= -1.3753;
             object.position.z += -0.9992;
             object.position.y += 0.9;
-            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), googleRedMaterial);
             tube.position.x -= -1.3753;
             tube.position.z += -0.9992;
             tube.position.y += 1;
@@ -727,7 +738,7 @@
             object.position.x -= 0.5253;
             object.position.z += -1.6167;
             object.position.y += 0.5;
-            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), googleRedMaterial);
             tube.position.x -= 0.5253;
             tube.position.z += -1.6167;
             tube.position.y += 1;
@@ -741,7 +752,7 @@
             object.position.x -= 1.7;
             object.position.z += 0;
             object.position.y += 0.8;
-            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), darkGrayMaterial);
+            var tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2, 128, 1), googleRedMaterial);
             tube.position.x -= 1.7;
             tube.position.z += 0;
             tube.position.y += 1;
@@ -749,12 +760,12 @@
             carousel.add(object);
         });
 
-        centerCarousel = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 2, 128, 1), lightBlueMaterial);
+        centerCarousel = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 2, 128, 1), googleYellowMaterial);
         centerCarousel.position.y += 1;
         carousel.add(centerCarousel);
 
-        var carouselTop = new THREE.Mesh(new THREE.ConeGeometry(2.5, 2.5, 8, 1), darkGrayMaterial);
-        carouselTop.position.y += 3.2;
+        var carouselTop = new THREE.Mesh(new THREE.ConeGeometry(2.5, 1.7, 8, 1), googleRedMaterial);
+        carouselTop.position.y += 2.8;
 
         var carouselComplete = new THREE.Object3D();
         carouselComplete.add(carousel);
@@ -763,18 +774,18 @@
         carouselComplete.position.x += 10;
 
         var ferrisWheel = new THREE.Object3D();
-        var ferrisOutline1 = new THREE.Mesh(new THREE.TorusGeometry(3, 0.1, 4, 256), darkGrayMaterial);
+        var ferrisOutline1 = new THREE.Mesh(new THREE.TorusGeometry(3, 0.1, 4, 256), googleRedMaterial);
         ferrisOutline1.position.z += 0.5;
-        var ferrisOutline2 = new THREE.Mesh(new THREE.TorusGeometry(3, 0.1, 4, 256), darkGrayMaterial);
+        var ferrisOutline2 = new THREE.Mesh(new THREE.TorusGeometry(3, 0.1, 4, 256), googleRedMaterial);
         ferrisOutline2.position.z -= 0.5;
         ferrisWheel.add(ferrisOutline1);
         ferrisWheel.add(ferrisOutline2);
 
         var ferrisStar1Geom = new THREE.ExtrudeGeometry(gearShape(3, 0.5), extrudeSettings);
         var ferrisStar2Geom = new THREE.ExtrudeGeometry(gearShape(3, 0.5), extrudeSettings);
-        var ferrisStar1 = new THREE.Mesh(ferrisStar1Geom, darkGrayMaterial);
+        var ferrisStar1 = new THREE.Mesh(ferrisStar1Geom, googleBlueMaterial);
         ferrisStar1.position.z += 0.5;
-        var ferrisStar2 = new THREE.Mesh(ferrisStar2Geom, darkGrayMaterial);
+        var ferrisStar2 = new THREE.Mesh(ferrisStar2Geom, googleBlueMaterial);
         ferrisStar2.position.z -= 0.5;
         ferrisWheel.add(ferrisStar1);
         ferrisWheel.add(ferrisStar2);
@@ -821,27 +832,27 @@
 
         var ferrisWheelComplete = new THREE.Object3D();
         var ferrisWheelBase = new THREE.Object3D();
-        var base1 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), darkGrayMaterial);
+        var base1 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), googleYellowMaterial);
         base1.rotateZ(Math.PI / 3);
         base1.position.y += 1.8;
         base1.position.z += 0.65;
         base1.position.x -= 1;
-        var base2 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), darkGrayMaterial);
+        var base2 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), googleYellowMaterial);
         base2.rotateZ(-Math.PI / 3);
         base2.position.y += 1.8;
         base2.position.z += 0.65;
         base2.position.x += 1;
-        var base3 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), darkGrayMaterial);
+        var base3 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), googleYellowMaterial);
         base3.rotateZ(Math.PI / 3);
         base3.position.y += 1.8;
         base3.position.z -= 0.55;
         base3.position.x -= 1;
-        var base4 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), darkGrayMaterial);
+        var base4 = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 0.1), googleYellowMaterial);
         base4.rotateZ(-Math.PI / 3);
         base4.position.y += 1.8;
         base4.position.z -= 0.55;
         base4.position.x += 1;
-        var base5 = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 3), darkGrayMaterial);
+        var base5 = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 3), googleGreenMaterial);
 
         ferrisWheelBase.add(base1);
         ferrisWheelBase.add(base2);
@@ -859,28 +870,28 @@
         var frisbeeComplete = new THREE.Object3D();
 
         var frisbeBase = new THREE.Object3D();
-        base1 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), darkGrayMaterial);
+        base1 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), googleYellowMaterial);
         base1.rotateZ(Math.PI / 20 * 8);
         base1.position.y += 3.8;
         base1.position.z += 2;
         base1.position.x -= 1;
-        base2 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), darkGrayMaterial);
+        base2 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), googleYellowMaterial);
         base2.rotateZ(-Math.PI / 20 * 8);
         base2.position.y += 3.8;
         base2.position.z += 2;
         base2.position.x += 1;
-        base3 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), darkGrayMaterial);
+        base3 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), googleYellowMaterial);
         base3.rotateZ(Math.PI / 20 * 8);
         base3.position.y += 3.8;
         base3.position.z -= 2;
         base3.position.x -= 1;
-        base4 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), darkGrayMaterial);
+        base4 = new THREE.Mesh(new THREE.BoxGeometry(8, 0.5, 0.1), googleYellowMaterial);
         base4.rotateZ(-Math.PI / 20 * 8);
         base4.position.y += 3.8;
         base4.position.z -= 2;
         base4.position.x += 1;
-        base5 = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 5), darkGrayMaterial);
-        var base6 = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 4, 128, 1), darkGrayMaterial);
+        base5 = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 5), googleGreenMaterial);
+        var base6 = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 4, 128, 1), googleRedMaterial);
         base6.rotateX(Math.PI / 2);
         base6.position.y += 7;
         frisbeBase.add(base1);
@@ -891,17 +902,17 @@
         frisbeBase.add(base6);
 
         var frisbee = new THREE.Object3D();
-        var frisbeeArm = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 4, 128, 1), darkGrayMaterial);
+        var frisbeeArm = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 4, 128, 1), googleGreenMaterial);
         frisbee.add(frisbeeArm);
         frisbeeArm.position.y += 2;
 
-        var frisbeeDisc = new THREE.Mesh(new THREE.TorusGeometry(1.4, 0.16, 128, 128), darkGrayMaterial);
+        var frisbeeDisc = new THREE.Mesh(new THREE.TorusGeometry(1.4, 0.16, 128, 128), googleRedMaterial);
         frisbeeDisc.rotateX(Math.PI / 2);
         frisbee.add(frisbeeDisc);
         frisbeeDisc.position.y += 4;
 
         var frisbeeDiscStarGeom = new THREE.ExtrudeGeometry(gearShape(1.4, 0.3), extrudeSettings);
-        var frisbeeDiscStar = new THREE.Mesh(frisbeeDiscStarGeom, darkGrayMaterial);
+        var frisbeeDiscStar = new THREE.Mesh(frisbeeDiscStarGeom, googleBlueMaterial);
         frisbeeDiscStar.rotateX(Math.PI / 2);
         frisbee.add(frisbeeDiscStar);
         frisbeeDiscStar.position.y += 4;
