@@ -1128,7 +1128,12 @@
             for (let i = 0; i < n; i++) {
                 let x = objectRadius * Math.cos(divAngle * i);
                 let z = objectRadius * Math.sin(divAngle * i);
-                let c = new THREE.Mesh(new THREE.CylinderGeometry(columnRadius, columnRadius, columnHeight, 128, 1), material);
+                let c = new THREE.Mesh(new THREE.CylinderGeometry(
+                    columnRadius,
+                    columnRadius,
+                    columnHeight,
+                    128,
+                    1), material);
                 object.add(c);
                 c.position.x = x;
                 c.position.z = z;
