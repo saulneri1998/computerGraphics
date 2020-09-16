@@ -19,16 +19,16 @@ public class Main {
          */
         private Color colorForPoint(int x, int y) {
             int r, g, b;
-            if (x >= 333) {
+            if (x >= 500) {
                 r = 255;
             } else {
-                r = x * 255 / 333;
+                r = x * 255 / 500;
             }
 
-            if (x <= 666) {
+            if (x <= 500) {
                 b = 255;
             } else {
-                b = 255 - ((x - 666) * 255 / 333);
+                b = 255 - ((x - 500) * 255 / 500);
             }
 
             double distCyan = Math.sqrt(x*x + y*y);
